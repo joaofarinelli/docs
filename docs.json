@@ -26,7 +26,8 @@
               "agents/create-agent",
               "agents/change-model",
               "agents/agent-profile",
-              "agents/agent-train"
+              "agents/agent-train",
+              "agents/agent-integrations"
             ]
           },
           {
