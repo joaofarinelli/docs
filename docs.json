@@ -17,12 +17,11 @@
             "group": "Getting started",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "billing"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Agentes",
             "pages": [
               "essentials/settings",
               "essentials/navigation"
