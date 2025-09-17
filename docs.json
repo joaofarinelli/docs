@@ -24,7 +24,8 @@
             "group": "Agentes",
             "pages": [
               "agents/create-agent",
-              "agents/change-model"
+              "agents/change-model",
+              "agents/agent-profile"
             ]
           },
           {
