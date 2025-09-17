@@ -1,82 +1,44 @@
 ---
 title: "Cobrança"
 description: "Entenda como funciona a assinatura da Timely.ai
-
 A Timely.ai funciona por meio de créditos. Cada resposta gerada pelo agente consome uma quantidade específica de créditos, dependendo do modelo de LLM (Large Language Model) escolhido. Atualmente, oferecemos três planos de assinatura:"
 sidebarTitle: "Cobrança"
 ---
 
-## **Planos**
+## Planos
 
 Oferecemos três planos de assinatura, cada um com uma quantidade específica de créditos e um número máximo de agentes que podem ser criados:
 
-### Step 1: Set up your local environment
+### Basic
 
-<AccordionGroup>
-  <Accordion title="Clone your docs locally" icon="copy">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
+Custa R\$97, oferece 3.500 créditos e permite a criação de até 5 agentes.
 
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion title="Start the preview server" icon="rectangle-terminal">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
+### Standard
 
-    <Tip>
-      Your preview updates automatically as you edit files.
-    </Tip>
-  </Accordion>
-</AccordionGroup>
+Custa R\$297, oferece 10.000 créditos e permite a criação de até 20 agentes.
 
-### Step 2: Deploy your changes
+### Corporate
 
-<AccordionGroup>
-  <Accordion title="Install our GitHub app" icon="github">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+Custa R\$597, oferece 30.000 créditos e permite a criação de até 50 agentes.
 
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-  </Accordion>
-  <Accordion title="Update your site name and colors" icon="palette">
-    For a first change, let's update the name and colors of your docs site.
+## Recarga inteligente
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+Para clientes que necessitam de um volume maior de créditos, disponibilizamos a opção de recarga inteligente. Esta funcionalidade permite que a plataforma compre automaticamente mais créditos conforme a demanda, configurando gatilhos do tipo: ‘ao atingir 1.000 créditos restantes, compre mais X créditos automaticamente’. Isso garante que você nunca fique sem créditos e também evita a compra de créditos que não serão utilizados.
 
-    <Tip>
-      Try changing the primary color to see an immediate difference!
-    </Tip>
-  </Accordion>
-</AccordionGroup>
+É importante lembrar que os créditos incluídos na assinatura não são acumulativos; eles expiram ao final do período de assinatura e são renovados com a próxima cobrança. No entanto, os créditos avulsos, adquiridos fora do plano de assinatura, não expiram.
 
-### Step 3: Go live
+## **Modelos de LLM**
 
-<Accordion title="Publish your docs" icon="rocket">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+Cada modelo de LLM cobra uma quantidade diferente de créditos por resposta gerada. Aqui está um resumo das taxas de consumo:
 
-## Next steps
+- GPT-3.5 Turbo: 1 crédito por resposta
+- GPT-4o: 10 créditos por resposta
+- GPT-4 Turbo: 20 créditos por resposta
+- Claude 3 Haiku: 1 crédito por resposta
+- Claude 3 Sonnet: 10 créditos por resposta
+- Claude 3 Opus: 40 créditos por resposta
+- Claude 3.5 Sonnet: 10 créditos por resposta
 
-Now that you have your docs running, explore these key features:
+É importante destacar que modelos que consomem mais créditos nem sempre são os melhores para todas as situações. Por exemplo, o modelo Claude 3.5 Sonnet mostrou-se superior ao modelo anterior Claude 3 Opus, apesar de um consumir 40 créditos e o mais novo consumir 10 créditos por resposta.
 
-<CardGroup cols={2}>
-  <Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-    Learn MDX syntax and start writing your documentation.
-  </Card>
-  <Card title="Customize style" icon="palette" href="/essentials/settings">
-    Make your docs match your brand perfectly.
-  </Card>
-  <Card title="Add code examples" icon="square-code" href="/essentials/code">
-    Include syntax-highlighted code blocks.
-  </Card>
-  <Card title="API documentation" icon="code" href="/api-reference/introduction">
-    Auto-generate API docs from OpenAPI specs.
-  </Card>
-</CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+Portanto, recomendamos testar diferentes modelos para encontrar aquele que melhor atende às suas necessidades em termos de qualidade e custo-benefício. Ajustando o modelo conforme necessário, você pode otimizar a performance do seu agente e a eficiência no uso de créditos.
