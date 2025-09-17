@@ -25,7 +25,8 @@
             "pages": [
               "agents/create-agent",
               "agents/change-model",
-              "agents/agent-profile"
+              "agents/agent-profile",
+              "agents/agent-train"
             ]
           },
           {
