@@ -4,8 +4,8 @@
   "name": "Timely.ai",
   "colors": {
     "primary": "#2563EB",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "light": "#2563EB",
+    "dark": "#2563EB"
   },
   "favicon": "/favicon.svg",
   "navigation": {
