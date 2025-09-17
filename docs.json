@@ -23,7 +23,7 @@
           {
             "group": "Agentes",
             "pages": [
-              "essentials/settings",
+              "agents/create-agent",
               "essentials/navigation"
             ]
           },
