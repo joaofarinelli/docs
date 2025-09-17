@@ -31,12 +31,10 @@
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Atendimento",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "team/invite-member",
+              "chat/monitor"
             ]
           },
           {
