@@ -24,7 +24,7 @@
             "group": "Agentes",
             "pages": [
               "agents/create-agent",
-              "essentials/navigation"
+              "agents/change-model"
             ]
           },
           {
