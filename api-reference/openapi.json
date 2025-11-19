@@ -1,217 +1,259 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "Timely AI – API v1",
+    "description": "API v1 do Timely AI para agentes, conversas, agendamentos, follow-ups, treinamentos e workspaces.",
+    "version": "1.0.0",
+    "license": { "name": "MIT" }
   },
   "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
+    { "url": "https://juiywycqytekaffjcbfa.supabase.co/functions/v1/api-v1" }
   ],
   "security": [
-    {
-      "bearerAuth": []
-    }
+    { "ApiKeyAuth": [] }
   ],
   "paths": {
-    "/plants": {
+    "/health": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+        "description": "Verifica saúde da API",
+        "responses": {
+          "200": {
+            "description": "Saúde da API",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Health" } } }
           }
+        }
+      }
+    },
+    "/agents": {
+      "get": {
+        "description": "Lista agentes da empresa",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "minimum": 1 }, "description": "Página" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100 }, "description": "Itens por página" },
+          { "name": "sort", "in": "query", "schema": { "type": "string" }, "description": "Coluna de ordenação" },
+          { "name": "order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"] }, "description": "Direção" },
+          { "name": "is_active", "in": "query", "schema": { "type": "boolean" }, "description": "Filtro por ativo" },
+          { "name": "workflow_type", "in": "query", "schema": { "type": "string" }, "description": "Filtro por workflow" }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Lista de agentes",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
+                "schema": { "$ref": "#/components/schemas/AgentsListResponse" }
               }
             }
           }
         }
       },
       "post": {
-        "description": "Creates a new plant in the store",
+        "description": "Cria um novo agente",
         "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AgentCreate" } } }
         },
         "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
+          "201": { "description": "Agente criado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AgentResponse" } } } }
         }
       }
     },
-    "/plants/{id}": {
+    "/agents/{id}": {
+      "get": {
+        "description": "Obtém agente por ID",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" } ],
+        "responses": { "200": { "description": "Agente", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AgentResponse" } } } } }
+      },
+      "put": {
+        "description": "Atualiza agente",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AgentUpdate" } } } },
+        "responses": { "200": { "description": "Agente atualizado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AgentResponse" } } } } }
+      },
       "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+        "description": "Remove agente",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" } ],
+        "responses": { "200": { "description": "Remoção", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteMessage" } } } } }
+      }
+    },
+    "/workspaces": {
+      "get": {
+        "description": "Lista workspaces (minimal)",
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
+          { "name": "page", "in": "query", "schema": { "type": "integer", "minimum": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100 } },
+          { "name": "sort", "in": "query", "schema": { "type": "string" } },
+          { "name": "order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"] } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Lista de workspaces (id, name)",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
+                "schema": { "$ref": "#/components/schemas/WorkspacesListResponse" }
               }
             }
           }
         }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+      },
       "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          }
-        },
+        "description": "Cria workspace",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/WorkspaceCreate" } } } },
+        "responses": { "201": { "description": "Workspace", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/WorkspaceMinimalResponse" } } } } }
+      }
+    },
+    "/workspaces/{id}": {
+      "get": {
+        "description": "Obtém workspace (minimal)",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" } ],
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "Workspace (id, name)",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/WorkspaceMinimalResponse" } } }
           }
         }
+      },
+      "put": {
+        "description": "Atualiza workspace",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/WorkspaceUpdate" } } } },
+        "responses": { "200": { "description": "Workspace", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/WorkspaceMinimalResponse" } } } } }
+      },
+      "delete": {
+        "description": "Remove workspace",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" } ],
+        "responses": { "200": { "description": "Mensagem", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeleteMessage" } } } } }
+      }
+    },
+    "/conversations": {
+      "get": {
+        "description": "Lista conversas",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "minimum": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100 } },
+          { "name": "sort", "in": "query", "schema": { "type": "string" } },
+          { "name": "order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"] } },
+          { "name": "channel", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } },
+          { "name": "ai_mode", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Lista de conversas", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConversationsListResponse" } } } } }
+      },
+      "post": {
+        "description": "Cria conversa",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConversationCreate" } } } },
+        "responses": { "201": { "description": "Conversa criada", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConversationResponse" } } } } }
+      }
+    },
+    "/conversations/{id}": {
+      "get": {
+        "description": "Obtém conversa",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" }, { "name": "include_messages", "in": "query", "schema": { "type": "boolean" } }, { "name": "message_limit", "in": "query", "schema": { "type": "integer" } } ],
+        "responses": { "200": { "description": "Conversa", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConversationWithMessagesResponse" } } } } }
+      },
+      "put": {
+        "description": "Atualiza conversa",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConversationUpdate" } } } },
+        "responses": { "200": { "description": "Conversa", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ConversationResponse" } } } } }
+      }
+    },
+    "/conversations/{id}/messages": {
+      "get": {
+        "description": "Lista mensagens da conversa",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" }, { "name": "page", "in": "query", "schema": { "type": "integer" } }, { "name": "limit", "in": "query", "schema": { "type": "integer" } } ],
+        "responses": { "200": { "description": "Mensagens", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MessagesListResponse" } } } } }
+      },
+      "post": {
+        "description": "Envia mensagem para conversa",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MessageCreate" } } } },
+        "responses": { "201": { "description": "Mensagem criada", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/MessageResponse" } } } } }
+      }
+    },
+    "/appointments": {
+      "get": {
+        "description": "Lista agendamentos",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } },
+          { "name": "from_date", "in": "query", "schema": { "type": "string" } },
+          { "name": "to_date", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Lista de agendamentos", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentsListResponse" } } } } }
+      },
+      "post": {
+        "description": "Cria agendamento",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentCreate" } } } },
+        "responses": { "201": { "description": "Agendamento", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentResponse" } } } } }
+      }
+    },
+    "/appointments/{id}": {
+      "get": { "description": "Obtém agendamento", "parameters": [ { "$ref": "#/components/parameters/IdPath" } ], "responses": { "200": { "description": "Agendamento", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentResponse" } } } } } },
+      "put": { "description": "Atualiza agendamento", "parameters": [ { "$ref": "#/components/parameters/IdPath" } ], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentUpdate" } } } }, "responses": { "200": { "description": "Agendamento", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentResponse" } } } } } }
+    },
+    "/appointments/{id}/status": {
+      "put": {
+        "description": "Atualiza status do agendamento",
+        "parameters": [ { "$ref": "#/components/parameters/IdPath" } ],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentStatusUpdate" } } } },
+        "responses": { "200": { "description": "Agendamento", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AppointmentResponse" } } } } }
       }
     }
   },
   "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
-      }
+      "ApiKeyAuth": { "type": "apiKey", "in": "header", "name": "x-api-key" },
+      "bearerAuth": { "type": "http", "scheme": "bearer" }
+    },
+    "parameters": {
+      "IdPath": { "name": "id", "in": "path", "required": true, "schema": { "type": "string" }, "description": "ID do recurso" }
+    },
+    "schemas": {
+      "Health": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "status": { "type": "string" }, "timestamp": { "type": "string" }, "company_id": { "type": "string" } } } } },
+      "AgentsListResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "agents": { "type": "array", "items": { "$ref": "#/components/schemas/Agent" } }, "pagination": { "$ref": "#/components/schemas/Pagination" } } } } },
+      "AgentResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "agent": { "$ref": "#/components/schemas/Agent" } } } } },
+      "Agent": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "is_active": { "type": "boolean" },
+          "is_default": { "type": "boolean" },
+          "workflow_type": { "type": "string" },
+          "language": { "type": "string" },
+          "tone": { "type": "string" }
+        },
+        "required": ["id", "name"]
+      },
+      "AgentCreate": { "type": "object", "properties": { "name": { "type": "string" } }, "required": ["name"] },
+      "AgentUpdate": { "type": "object", "properties": { "name": { "type": "string" }, "description": { "type": "string" }, "is_active": { "type": "boolean" }, "is_default": { "type": "boolean" } } },
+      "WorkspacesListResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "workspaces": { "type": "array", "items": { "$ref": "#/components/schemas/WorkspaceMinimal" } }, "pagination": { "$ref": "#/components/schemas/Pagination" } } } } },
+      "WorkspaceMinimalResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "$ref": "#/components/schemas/WorkspaceMinimal" } } },
+      "WorkspaceMinimal": { "type": "object", "properties": { "id": { "type": "string" }, "name": { "type": "string" } }, "required": ["id", "name"] },
+      "WorkspaceCreate": { "type": "object", "properties": { "name": { "type": "string" }, "description": { "type": "string" }, "settings": { "type": "object" } }, "required": ["name"] },
+      "WorkspaceUpdate": { "type": "object", "properties": { "name": { "type": "string" }, "description": { "type": "string" }, "settings": { "type": "object" }, "is_active": { "type": "boolean" } } },
+      "ConversationsListResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "conversations": { "type": "array", "items": { "$ref": "#/components/schemas/Conversation" } }, "pagination": { "$ref": "#/components/schemas/Pagination" } } } } },
+      "ConversationResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "conversation": { "$ref": "#/components/schemas/Conversation" } } } } },
+      "ConversationWithMessagesResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "conversation": { "$ref": "#/components/schemas/ConversationWithMessages" } } } } },
+      "Conversation": { "type": "object", "properties": { "id": { "type": "string" }, "customer_name": { "type": "string" }, "customer_phone": { "type": "string" }, "channel": { "type": "string" }, "status": { "type": "string" }, "ai_mode": { "type": "string" } }, "required": ["id", "channel"] },
+      "ConversationWithMessages": { "allOf": [ { "$ref": "#/components/schemas/Conversation" }, { "type": "object", "properties": { "messages": { "type": "array", "items": { "$ref": "#/components/schemas/Message" } }, "message_count": { "type": "integer" } } } ] },
+      "ConversationCreate": { "type": "object", "properties": { "channel": { "type": "string", "enum": ["whatsapp", "telegram", "email", "website"] }, "customer_name": { "type": "string" }, "customer_phone": { "type": "string" }, "customer_email": { "type": "string" } }, "required": ["channel"] },
+      "ConversationUpdate": { "type": "object", "properties": { "status": { "type": "string" }, "ai_mode": { "type": "string" }, "customer_name": { "type": "string" } } },
+      "MessagesListResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "messages": { "type": "array", "items": { "$ref": "#/components/schemas/Message" } }, "pagination": { "$ref": "#/components/schemas/Pagination" } } } } },
+      "MessageResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "message": { "$ref": "#/components/schemas/Message" } } } } },
+      "Message": { "type": "object", "properties": { "id": { "type": "string" }, "conversation_id": { "type": "string" }, "content": { "type": "string" }, "sender_type": { "type": "string" }, "message_type": { "type": "string" }, "metadata": { "type": "object" } }, "required": ["id", "conversation_id", "content", "sender_type"] },
+      "MessageCreate": { "type": "object", "properties": { "content": { "type": "string" }, "sender_type": { "type": "string", "enum": ["customer", "agent", "system", "ai"] }, "message_type": { "type": "string", "enum": ["text", "image"] }, "metadata": { "type": "object" }, "media_base64": { "type": "string" }, "media_url": { "type": "string" }, "media_type": { "type": "string" }, "caption": { "type": "string" }, "fileName": { "type": "string" }, "fileSize": { "type": "integer" } }, "required": ["sender_type"] },
+      "AppointmentsListResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "appointments": { "type": "array", "items": { "$ref": "#/components/schemas/Appointment" } }, "pagination": { "$ref": "#/components/schemas/Pagination" } } } } },
+      "AppointmentResponse": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "properties": { "appointment": { "$ref": "#/components/schemas/Appointment" } } } } },
+      "Appointment": { "type": "object", "properties": { "id": { "type": "string" }, "customer_name": { "type": "string" }, "customer_phone": { "type": "string" }, "customer_email": { "type": "string" }, "appointment_date": { "type": "string" }, "start_time": { "type": "string" }, "end_time": { "type": "string" }, "status": { "type": "string" } }, "required": ["id", "customer_name", "appointment_date", "start_time"] },
+      "AppointmentCreate": { "type": "object", "properties": { "customer_name": { "type": "string" }, "appointment_date": { "type": "string" }, "start_time": { "type": "string" }, "service_id": { "type": "string" }, "customer_email": { "type": "string" }, "customer_phone": { "type": "string" } }, "required": ["customer_name", "appointment_date", "start_time"] },
+      "AppointmentUpdate": { "type": "object", "properties": { "customer_name": { "type": "string" }, "appointment_date": { "type": "string" }, "start_time": { "type": "string" }, "end_time": { "type": "string" }, "status": { "type": "string" }, "notes": { "type": "string" } } },
+      "AppointmentStatusUpdate": { "type": "object", "properties": { "status": { "type": "string", "enum": ["scheduled", "confirmed", "cancelled", "completed", "no_show"] } }, "required": ["status"] },
+      "Pagination": { "type": "object", "properties": { "page": { "type": "integer" }, "limit": { "type": "integer" }, "total": { "type": "integer" }, "total_pages": { "type": "integer" } } },
+      "DeleteMessage": { "type": "object", "properties": { "message": { "type": "string" } } }
     }
   }
 }
