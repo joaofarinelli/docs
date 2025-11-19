@@ -1,4 +1,41 @@
 ---
-title: 'Create Plant'
-openapi: 'POST /plants'
+title: "Lista os workspaces"
+openapi: "POST /plants"
+description: "Lista os workspaces da conta"
 ---
+
+## Endpoint
+
+`GET /v2/workspaces`
+
+### cURL
+
+```
+curl --request GET \
+  --url https://api.gptmaker.ai/v2/workspaces \
+  --header 'Authorization: Bearer <token>'
+```
+
+## Autorização
+
+- **Authorization** (string, header, required): Bearer authentication header of the form `Bearer <token>`, onde `<token>` é seu auth token.
+
+## Resposta
+
+### 200 – Lista de workspaces
+
+Exemplo de resposta:
+
+```
+[
+  {
+    "id": "<string>",
+    "name": "<string>"
+  }
+]
+```
+
+| Campo | Tipo   | Descrição         |
+| :---- | :----- | :---------------- |
+| id    | string | ID do workspace   |
+| name  | string | Nome do workspace |
