@@ -1,33 +1,16 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "Introduction"
+description: "Documentação completa da API de integração com a Timely.ai."
 ---
 
 <Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
+  Esta seção da documentação é destinada a desenvolvedores e empresas de software. Para informações sobre o uso da ferramenta, consulte a [**documentação do usuário**](https://developer.timelyai.com.br).
 </Note>
 
-## Welcome
+## Autenticação
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+Todas as APIs utilizam autenticação por meio de Bearer tokens, que devem ser informados no cabeçalho de cada requisição. Para obter seu token de autenticação, acesse a página [**Chave de API**](https://app.gptmaker.ai/browse/developers)
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
+<Card title="Plant Store Endpoints" icon="leaf" href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json">
+  Clique para obter o token de acesso a API da ti
 </Card>
-
-## Authentication
-
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
-
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```
