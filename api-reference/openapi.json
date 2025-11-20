@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "https://juiywycqytekaffjcbfa.supabase.co/functions/v1"
+      "url": "https://juiywycqytekaffjcbfa.supabase.co/functions/v1/api-v1"
     }
   ],
   "security": [
@@ -18,65 +18,89 @@
       "ApiKeyAuth": []
     }
   ],
+  "tags": [
+    {
+      "name": "Agents",
+      "description": "Gerenciamento de agentes de IA"
+    },
+    {
+      "name": "Conversations",
+      "description": "Gerenciamento de conversas e mensagens"
+    },
+    {
+      "name": "Appointments",
+      "description": "Gerenciamento de agendamentos"
+    },
+    {
+      "name": "Follow-ups",
+      "description": "Automação de follow-ups"
+    },
+    {
+      "name": "Training",
+      "description": "Treinamento da base de conhecimento"
+    },
+    {
+      "name": "Workspaces",
+      "description": "Gerenciamento de workspaces, permissões e configurações"
+    },
+    {
+      "name": "Credits",
+      "description": "Gerenciamento de créditos"
+    }
+  ],
   "paths": {
-    "/api-v1/workspace/{workspaceId}/agents": {
+    "/health": {
       "get": {
-        "description": "Lista agentes da empresa",
+        "tags": [
+          "System"
+        ],
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "Sistema online",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agents": {
+      "get": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Listar agentes",
         "parameters": [
           {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "description": "Página"
+            "$ref": "#/components/parameters/Page"
           },
           {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100
-            },
-            "description": "Itens por página"
+            "$ref": "#/components/parameters/Limit"
           },
           {
-            "name": "sort",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Coluna de ordenação"
+            "$ref": "#/components/parameters/Sort"
           },
           {
-            "name": "order",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ]
-            },
-            "description": "Direção"
+            "$ref": "#/components/parameters/Order"
           },
           {
             "name": "is_active",
             "in": "query",
             "schema": {
               "type": "boolean"
-            },
-            "description": "Filtro por ativo"
+            }
           },
           {
             "name": "workflow_type",
             "in": "query",
             "schema": {
               "type": "string"
-            },
-            "description": "Filtro por workflow"
+            }
           }
         ],
         "responses": {
@@ -93,7 +117,10 @@
         }
       },
       "post": {
-        "description": "Cria um novo agente",
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Criar agente",
         "requestBody": {
           "required": true,
           "content": {
@@ -120,7 +147,10 @@
     },
     "/agents/{id}": {
       "get": {
-        "description": "Obtém agente por ID",
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Obter agente",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
@@ -128,7 +158,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Agente",
+            "description": "Detalhes do agente",
             "content": {
               "application/json": {
                 "schema": {
@@ -140,7 +170,10 @@
         }
       },
       "put": {
-        "description": "Atualiza agente",
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Atualizar agente",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
@@ -170,7 +203,10 @@
         }
       },
       "delete": {
-        "description": "Remove agente",
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Remover agente",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
@@ -178,11 +214,16 @@
         ],
         "responses": {
           "200": {
-            "description": "Remoção",
+            "description": "Agente removido",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DeleteMessage"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
@@ -190,24 +231,122 @@
         }
       }
     },
-    "/api-v1/workspace/{workspaceId}/credits": {
-      "get": {
-        "description": "Quantidade de crédito disponível na conta",
-        "security": [ { "ApiKeyAuth": [] } ],
-        "parameters": [ { "$ref": "#/components/parameters/WorkspaceIdPath" } ],
+    "/agent/{id}/inactive": {
+      "put": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Inativar agente",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Quantidade de crédito disponível",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/WorkspaceCreditsResponse" } } }
+            "description": "Agente inativado"
+          }
+        }
+      }
+    },
+    "/agent/{id}/active": {
+      "put": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Ativar agente",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agente ativado"
+          }
+        }
+      }
+    },
+    "/workspace/{workspaceId}/agents": {
+      "get": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Listar agentes por workspace",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           },
-          "400": { "description": "Requisição inválida", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } },
-          "403": { "description": "Acesso negado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorResponse" } } } }
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de agentes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentsListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Criar agente em workspace",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Agente criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
-    "/api-v1/workspaces/{id}": {
+    "/agent/{id}/settings": {
       "get": {
-        "description": "Obtém workspace (minimal)",
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Obter configurações do agente",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
@@ -215,56 +354,426 @@
         ],
         "responses": {
           "200": {
-            "description": "Workspace (id, name)",
+            "description": "Configurações do agente",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/WorkspaceMinimalResponse"
+                  "type": "object"
                 }
               }
             }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Atualizar configurações do agente",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Configurações atualizadas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent/{id}/conversation": {
+      "post": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Conversar com agente (Simulação)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "string"
+                  },
+                  "conversation_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resposta do agente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reply": {
+                      "type": "string"
+                    },
+                    "conversation_id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent/{id}/add-message": {
+      "post": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Adicionar mensagem manualmente",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ai",
+                      "customer"
+                    ]
+                  },
+                  "conversation_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mensagem adicionada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent/{id}/trainings": {
+      "get": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Listar treinamentos do agente",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de treinamentos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Adicionar treinamento ao agente",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Treinamento adicionado"
+          }
+        }
+      }
+    },
+    "/training/{id}": {
+      "put": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Atualizar treinamento",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Treinamento atualizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Remover treinamento",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Treinamento removido"
+          }
+        }
+      }
+    },
+    "/training/documents": {
+      "get": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Listar documentos de treinamento",
+        "responses": {
+          "200": {
+            "description": "Lista de documentos"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Criar documento de treinamento",
+        "responses": {
+          "201": {
+            "description": "Documento criado"
+          }
+        }
+      }
+    },
+    "/training/documents/{id}": {
+      "delete": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Remover documento",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Documento removido"
+          }
+        }
+      }
+    },
+    "/training/qa": {
+      "get": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Listar Q&A",
+        "responses": {
+          "200": {
+            "description": "Lista de Q&A"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Criar Q&A",
+        "responses": {
+          "201": {
+            "description": "Q&A criado"
+          }
+        }
+      }
+    },
+    "/training/qa/{id}": {
+      "put": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Atualizar Q&A",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Q&A atualizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Remover Q&A",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Q&A removido"
+          }
+        }
+      }
+    },
+    "/training/text": {
+      "get": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Listar textos de treinamento",
+        "responses": {
+          "200": {
+            "description": "Lista de textos"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Criar texto de treinamento",
+        "responses": {
+          "201": {
+            "description": "Texto criado"
+          }
+        }
+      }
+    },
+    "/training/text/{id}": {
+      "put": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Atualizar texto",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Texto atualizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Remover texto",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Texto removido"
+          }
+        }
+      }
+    },
+    "/training/stats": {
+      "get": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Estatísticas de treinamento",
+        "responses": {
+          "200": {
+            "description": "Estatísticas"
           }
         }
       }
     },
     "/conversations": {
       "get": {
-        "description": "Lista conversas",
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Listar conversas",
         "parameters": [
           {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
+            "$ref": "#/components/parameters/Page"
           },
           {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100
-            }
-          },
-          {
-            "name": "sort",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "order",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ]
-            }
+            "$ref": "#/components/parameters/Limit"
           },
           {
             "name": "channel",
@@ -275,13 +784,6 @@
           },
           {
             "name": "status",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "ai_mode",
             "in": "query",
             "schema": {
               "type": "string"
@@ -302,7 +804,10 @@
         }
       },
       "post": {
-        "description": "Cria conversa",
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Criar conversa",
         "requestBody": {
           "required": true,
           "content": {
@@ -329,7 +834,10 @@
     },
     "/conversations/{id}": {
       "get": {
-        "description": "Obtém conversa",
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Obter conversa",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
@@ -340,22 +848,15 @@
             "schema": {
               "type": "boolean"
             }
-          },
-          {
-            "name": "message_limit",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Conversa",
+            "description": "Detalhes da conversa",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConversationWithMessagesResponse"
+                  "$ref": "#/components/schemas/ConversationResponse"
                 }
               }
             }
@@ -363,14 +864,16 @@
         }
       },
       "put": {
-        "description": "Atualiza conversa",
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Atualizar conversa",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -381,7 +884,7 @@
         },
         "responses": {
           "200": {
-            "description": "Conversa",
+            "description": "Conversa atualizada",
             "content": {
               "application/json": {
                 "schema": {
@@ -395,29 +898,24 @@
     },
     "/conversations/{id}/messages": {
       "get": {
-        "description": "Lista mensagens da conversa",
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Listar mensagens",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
           },
           {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/Page"
           },
           {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/Limit"
           }
         ],
         "responses": {
           "200": {
-            "description": "Mensagens",
+            "description": "Lista de mensagens",
             "content": {
               "application/json": {
                 "schema": {
@@ -427,76 +925,68 @@
             }
           }
         }
-      },
-      "post": {
-        "description": "Envia mensagem para conversa",
+      }
+    },
+    "/conversations/{id}/pause": {
+      "put": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Pausar/Retomar IA",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MessageCreate"
+                "type": "object",
+                "properties": {
+                  "paused": {
+                    "type": "boolean"
+                  },
+                  "pause_minutes": {
+                    "type": "integer"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Mensagem criada",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
-                }
-              }
-            }
+          "200": {
+            "description": "Status atualizado"
+          }
+        }
+      }
+    },
+    "/conversations/stats": {
+      "get": {
+        "tags": [
+          "Conversations"
+        ],
+        "summary": "Estatísticas de conversas",
+        "responses": {
+          "200": {
+            "description": "Estatísticas"
           }
         }
       }
     },
     "/appointments": {
       "get": {
-        "description": "Lista agendamentos",
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Listar agendamentos",
         "parameters": [
           {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/Page"
           },
           {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "from_date",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "to_date",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/Limit"
           }
         ],
         "responses": {
@@ -513,9 +1003,11 @@
         }
       },
       "post": {
-        "description": "Cria agendamento",
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Criar agendamento",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -526,7 +1018,7 @@
         },
         "responses": {
           "201": {
-            "description": "Agendamento",
+            "description": "Agendamento criado",
             "content": {
               "application/json": {
                 "schema": {
@@ -540,7 +1032,10 @@
     },
     "/appointments/{id}": {
       "get": {
-        "description": "Obtém agendamento",
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Obter agendamento",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
@@ -548,7 +1043,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Agendamento",
+            "description": "Detalhes do agendamento",
             "content": {
               "application/json": {
                 "schema": {
@@ -560,14 +1055,16 @@
         }
       },
       "put": {
-        "description": "Atualiza agendamento",
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Atualizar agendamento",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -578,7 +1075,7 @@
         },
         "responses": {
           "200": {
-            "description": "Agendamento",
+            "description": "Agendamento atualizado",
             "content": {
               "application/json": {
                 "schema": {
@@ -588,33 +1085,808 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Cancelar agendamento",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agendamento cancelado"
+          }
+        }
       }
     },
     "/appointments/{id}/status": {
       "put": {
-        "description": "Atualiza status do agendamento",
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Atualizar status do agendamento",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdPath"
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AppointmentStatusUpdate"
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Agendamento",
+            "description": "Status atualizado"
+          }
+        }
+      }
+    },
+    "/appointments/calendar": {
+      "get": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Calendário de agendamentos",
+        "responses": {
+          "200": {
+            "description": "Dados do calendário"
+          }
+        }
+      }
+    },
+    "/appointments/stats": {
+      "get": {
+        "tags": [
+          "Appointments"
+        ],
+        "summary": "Estatísticas de agendamentos",
+        "responses": {
+          "200": {
+            "description": "Estatísticas"
+          }
+        }
+      }
+    },
+    "/followups": {
+      "get": {
+        "tags": [
+          "Follow-ups"
+        ],
+        "summary": "Listar follow-ups",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Page"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de follow-ups"
+          }
+        }
+      }
+    },
+    "/followups/scheduled": {
+      "get": {
+        "tags": [
+          "Follow-ups"
+        ],
+        "summary": "Listar follow-ups agendados",
+        "responses": {
+          "200": {
+            "description": "Lista de follow-ups agendados"
+          }
+        }
+      }
+    },
+    "/followups/automation": {
+      "post": {
+        "tags": [
+          "Follow-ups"
+        ],
+        "summary": "Criar automação de follow-up",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Automação criada"
+          }
+        }
+      }
+    },
+    "/followups/automation/{id}": {
+      "get": {
+        "tags": [
+          "Follow-ups"
+        ],
+        "summary": "Obter automação",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes da automação"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Follow-ups"
+        ],
+        "summary": "Atualizar automação",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Automação atualizada"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Follow-ups"
+        ],
+        "summary": "Remover automação",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Automação removida"
+          }
+        }
+      }
+    },
+    "/followups/trigger": {
+      "post": {
+        "tags": [
+          "Follow-ups"
+        ],
+        "summary": "Disparar follow-up manual",
+        "responses": {
+          "201": {
+            "description": "Follow-up disparado"
+          }
+        }
+      }
+    },
+    "/followups/stats": {
+      "get": {
+        "tags": [
+          "Follow-ups"
+        ],
+        "summary": "Estatísticas de follow-ups",
+        "responses": {
+          "200": {
+            "description": "Estatísticas"
+          }
+        }
+      }
+    },
+    "/workspaces": {
+      "get": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Listar workspaces",
+        "responses": {
+          "200": {
+            "description": "Lista de workspaces",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppointmentResponse"
+                  "$ref": "#/components/schemas/WorkspacesListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Criar workspace",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Workspace criado"
+          }
+        }
+      }
+    },
+    "/workspaces/{id}": {
+      "get": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Obter workspace",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes do workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceMinimalResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Atualizar workspace",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Workspace atualizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Remover workspace",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workspace removido"
+          }
+        }
+      }
+    },
+    "/workspaces/{id}/members": {
+      "get": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Listar membros do workspace",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de membros"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Adicionar membro ao workspace",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Membro adicionado"
+          }
+        }
+      }
+    },
+    "/workspaces/{id}/members/{memberId}": {
+      "put": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Atualizar membro do workspace",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          },
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Membro atualizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Remover membro do workspace",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          },
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Membro removido"
+          }
+        }
+      }
+    },
+    "/workspaces/permissions": {
+      "get": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Listar permissões",
+        "responses": {
+          "200": {
+            "description": "Lista de permissões"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Criar permissão",
+        "responses": {
+          "201": {
+            "description": "Permissão criada"
+          }
+        }
+      }
+    },
+    "/workspaces/permissions/{id}": {
+      "put": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Atualizar permissão",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Permissão atualizada"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Remover permissão",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Permissão removida"
+          }
+        }
+      }
+    },
+    "/workspaces/roles": {
+      "get": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Listar roles",
+        "responses": {
+          "200": {
+            "description": "Lista de roles"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Criar role",
+        "responses": {
+          "201": {
+            "description": "Role criado"
+          }
+        }
+      }
+    },
+    "/workspaces/roles/{id}": {
+      "put": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Atualizar role",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role atualizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Remover role",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Role removido"
+          }
+        }
+      }
+    },
+    "/workspaces/permission-templates": {
+      "get": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Listar templates de permissão",
+        "responses": {
+          "200": {
+            "description": "Lista de templates"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Criar template de permissão",
+        "responses": {
+          "201": {
+            "description": "Template criado"
+          }
+        }
+      }
+    },
+    "/workspaces/permission-templates/{id}": {
+      "put": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Atualizar template de permissão",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template atualizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Remover template de permissão",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Template removido"
+          }
+        }
+      }
+    },
+    "/workspaces/settings": {
+      "get": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Listar configurações",
+        "responses": {
+          "200": {
+            "description": "Lista de configurações"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Criar configuração",
+        "responses": {
+          "201": {
+            "description": "Configuração criada"
+          }
+        }
+      }
+    },
+    "/workspaces/settings/{id}": {
+      "put": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Atualizar configuração",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuração atualizada"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Remover configuração",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuração removida"
+          }
+        }
+      }
+    },
+    "/workspaces/settings-templates": {
+      "get": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Listar templates de configuração",
+        "responses": {
+          "200": {
+            "description": "Lista de templates"
+          }
+        }
+      }
+    },
+    "/workspaces/settings-templates/apply": {
+      "post": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Aplicar template de configuração",
+        "responses": {
+          "200": {
+            "description": "Template aplicado"
+          }
+        }
+      }
+    },
+    "/workspaces/themes": {
+      "get": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Listar temas",
+        "responses": {
+          "200": {
+            "description": "Lista de temas"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Criar tema",
+        "responses": {
+          "201": {
+            "description": "Tema criado"
+          }
+        }
+      }
+    },
+    "/workspaces/themes/{id}": {
+      "put": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Atualizar tema",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tema atualizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Remover tema",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tema removido"
+          }
+        }
+      }
+    },
+    "/workspaces/themes/{id}/activate": {
+      "put": {
+        "tags": [
+          "Workspaces"
+        ],
+        "summary": "Ativar tema",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tema ativado"
+          }
+        }
+      }
+    },
+    "/company/credits": {
+      "get": {
+        "tags": [
+          "Credits"
+        ],
+        "summary": "Obter créditos da empresa",
+        "responses": {
+          "200": {
+            "description": "Créditos da empresa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "balance": {
+                      "type": "number"
+                    },
+                    "total_used": {
+                      "type": "number"
+                    },
+                    "plan_monthly": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agent/{id}/credits-spent": {
+      "get": {
+        "tags": [
+          "Credits"
+        ],
+        "summary": "Obter créditos gastos pelo agente",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdPath"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Créditos gastos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "number"
+                    },
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -629,9 +1901,8 @@
         "type": "apiKey",
         "in": "header",
         "name": "x-api-key",
-        "description": "Autenticação por chave de API. Envie sua chave no cabeçalho x-api-key: <token>. A chave pode ser gerada no Dashboard em Developers."
-      },
-      "bearerAuth": { "type": "http", "scheme": "bearer", "description": "Bearer authentication header no formato Authorization: Bearer <token>, onde <token> é seu auth token." }
+        "description": "Autenticação por chave de API."
+      }
     },
     "parameters": {
       "IdPath": {
@@ -643,66 +1914,79 @@
         },
         "description": "ID do recurso"
       },
-      "WorkspaceIdPath": { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" }, "description": "ID do workspace" }
+      "Page": {
+        "name": "page",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "description": "Número da página"
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20
+        },
+        "description": "Itens por página"
+      },
+      "Sort": {
+        "name": "sort",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "default": "created_at"
+        },
+        "description": "Campo para ordenação"
+      },
+      "Order": {
+        "name": "order",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "default": "desc"
+        },
+        "description": "Direção da ordenação"
+      }
     },
     "schemas": {
       "Health": {
         "type": "object",
         "properties": {
-          "success": {
-            "type": "boolean"
+          "status": {
+            "type": "string"
           },
-          "data": {
-            "type": "object",
-            "properties": {
-              "status": {
-                "type": "string"
-              },
-              "timestamp": {
-                "type": "string"
-              },
-              "company_id": {
-                "type": "string"
-              }
-            }
+          "timestamp": {
+            "type": "string"
+          },
+          "company_id": {
+            "type": "string"
           }
         }
       },
-      "AgentsListResponse": {
+      "Pagination": {
         "type": "object",
         "properties": {
-          "success": {
-            "type": "boolean"
+          "page": {
+            "type": "integer"
           },
-          "data": {
-            "type": "object",
-            "properties": {
-              "agents": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Agent"
-                }
-              },
-              "pagination": {
-                "$ref": "#/components/schemas/Pagination"
-              }
-            }
-          }
-        }
-      },
-      "AgentResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
+          "limit": {
+            "type": "integer"
           },
-          "data": {
-            "type": "object",
-            "properties": {
-              "agent": {
-                "$ref": "#/components/schemas/Agent"
-              }
-            }
+          "total": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
           }
         }
       },
@@ -732,23 +2016,55 @@
           },
           "tone": {
             "type": "string"
+          },
+          "personality": {
+            "type": "string"
+          },
+          "greeting_message": {
+            "type": "string"
+          },
+          "custom_instructions": {
+            "type": "string"
+          },
+          "business_context": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
           }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
+        }
       },
       "AgentCreate": {
         "type": "object",
+        "required": [
+          "name"
+        ],
         "properties": {
           "name": {
             "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "workflow_type": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "tone": {
+            "type": "string"
+          },
+          "personality": {
+            "type": "string"
+          },
+          "greeting_message": {
+            "type": "string"
           }
-        },
-        "required": [
-          "name"
-        ]
+        }
       },
       "AgentUpdate": {
         "type": "object",
@@ -767,7 +2083,7 @@
           }
         }
       },
-      "WorkspacesListResponse": {
+      "AgentResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -776,10 +2092,26 @@
           "data": {
             "type": "object",
             "properties": {
-              "workspaces": {
+              "agent": {
+                "$ref": "#/components/schemas/Agent"
+              }
+            }
+          }
+        }
+      },
+      "AgentsListResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "agents": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/WorkspaceMinimal"
+                  "$ref": "#/components/schemas/Agent"
                 }
               },
               "pagination": {
@@ -789,63 +2121,94 @@
           }
         }
       },
-      "WorkspaceMinimalResponse": {
+      "Conversation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "customer_name": {
+            "type": "string"
+          },
+          "customer_phone": {
+            "type": "string"
+          },
+          "customer_email": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "ai_mode": {
+            "type": "string"
+          },
+          "agent_id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "ConversationCreate": {
+        "type": "object",
+        "required": [
+          "channel"
+        ],
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "whatsapp",
+              "telegram",
+              "email",
+              "website"
+            ]
+          },
+          "customer_name": {
+            "type": "string"
+          },
+          "customer_phone": {
+            "type": "string"
+          },
+          "customer_email": {
+            "type": "string"
+          },
+          "agent_id": {
+            "type": "string"
+          }
+        }
+      },
+      "ConversationUpdate": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "ai_mode": {
+            "type": "string"
+          }
+        }
+      },
+      "ConversationResponse": {
         "type": "object",
         "properties": {
           "success": {
             "type": "boolean"
           },
           "data": {
-            "$ref": "#/components/schemas/WorkspaceMinimal"
-          }
-        }
-      },
-      "WorkspaceMinimal": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
-      },
-      "WorkspaceCreate": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "settings": {
-            "type": "object"
-          }
-        },
-        "required": [
-          "name"
-        ]
-      },
-      "WorkspaceUpdate": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "settings": {
-            "type": "object"
-          },
-          "is_active": {
-            "type": "boolean"
+            "type": "object",
+            "properties": {
+              "conversation": {
+                "$ref": "#/components/schemas/Conversation"
+              }
+            }
           }
         }
       },
@@ -871,123 +2234,70 @@
           }
         }
       },
-      "ConversationResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "conversation": {
-                "$ref": "#/components/schemas/Conversation"
-              }
-            }
-          }
-        }
-      },
-      "ConversationWithMessagesResponse": {
-        "type": "object",
-        "properties": {
-          "success": {
-            "type": "boolean"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "conversation": {
-                "$ref": "#/components/schemas/ConversationWithMessages"
-              }
-            }
-          }
-        }
-      },
-      "Conversation": {
+      "Message": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
           },
-          "customer_name": {
+          "content": {
             "type": "string"
           },
-          "customer_phone": {
-            "type": "string"
-          },
-          "channel": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "ai_mode": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "channel"
-        ]
-      },
-      "ConversationWithMessages": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Conversation"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "messages": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Message"
-                }
-              },
-              "message_count": {
-                "type": "integer"
-              }
-            }
-          }
-        ]
-      },
-      "ConversationCreate": {
-        "type": "object",
-        "properties": {
-          "channel": {
+          "sender_type": {
             "type": "string",
             "enum": [
-              "whatsapp",
-              "telegram",
-              "email",
-              "website"
+              "customer",
+              "agent",
+              "system",
+              "ai"
             ]
           },
-          "customer_name": {
+          "message_type": {
             "type": "string"
           },
-          "customer_phone": {
-            "type": "string"
-          },
-          "customer_email": {
+          "created_at": {
             "type": "string"
           }
-        },
-        "required": [
-          "channel"
-        ]
+        }
       },
-      "ConversationUpdate": {
+      "MessageCreate": {
+        "type": "object",
+        "required": [
+          "content",
+          "sender_type"
+        ],
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "sender_type": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "agent",
+              "system",
+              "ai"
+            ]
+          },
+          "message_type": {
+            "type": "string",
+            "default": "text"
+          }
+        }
+      },
+      "MessageResponse": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "string"
+          "success": {
+            "type": "boolean"
           },
-          "ai_mode": {
-            "type": "string"
-          },
-          "customer_name": {
-            "type": "string"
+          "data": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
           }
         }
       },
@@ -1013,7 +2323,69 @@
           }
         }
       },
-      "MessageResponse": {
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "start_time": {
+            "type": "string"
+          },
+          "end_time": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "customer_name": {
+            "type": "string"
+          }
+        }
+      },
+      "AppointmentCreate": {
+        "type": "object",
+        "required": [
+          "title",
+          "start_time",
+          "end_time"
+        ],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "start_time": {
+            "type": "string"
+          },
+          "end_time": {
+            "type": "string"
+          },
+          "customer_name": {
+            "type": "string"
+          }
+        }
+      },
+      "AppointmentUpdate": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "start_time": {
+            "type": "string"
+          },
+          "end_time": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "AppointmentResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -1022,89 +2394,12 @@
           "data": {
             "type": "object",
             "properties": {
-              "message": {
-                "$ref": "#/components/schemas/Message"
+              "appointment": {
+                "$ref": "#/components/schemas/Appointment"
               }
             }
           }
         }
-      },
-      "Message": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "conversation_id": {
-            "type": "string"
-          },
-          "content": {
-            "type": "string"
-          },
-          "sender_type": {
-            "type": "string"
-          },
-          "message_type": {
-            "type": "string"
-          },
-          "metadata": {
-            "type": "object"
-          }
-        },
-        "required": [
-          "id",
-          "conversation_id",
-          "content",
-          "sender_type"
-        ]
-      },
-      "MessageCreate": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "string"
-          },
-          "sender_type": {
-            "type": "string",
-            "enum": [
-              "customer",
-              "agent",
-              "system",
-              "ai"
-            ]
-          },
-          "message_type": {
-            "type": "string",
-            "enum": [
-              "text",
-              "image"
-            ]
-          },
-          "metadata": {
-            "type": "object"
-          },
-          "media_base64": {
-            "type": "string"
-          },
-          "media_url": {
-            "type": "string"
-          },
-          "media_type": {
-            "type": "string"
-          },
-          "caption": {
-            "type": "string"
-          },
-          "fileName": {
-            "type": "string"
-          },
-          "fileSize": {
-            "type": "integer"
-          }
-        },
-        "required": [
-          "sender_type"
-        ]
       },
       "AppointmentsListResponse": {
         "type": "object",
@@ -1128,7 +2423,29 @@
           }
         }
       },
-      "AppointmentResponse": {
+      "WorkspaceMinimal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkspaceMinimalResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/WorkspaceMinimal"
+          }
+        }
+      },
+      "WorkspacesListResponse": {
         "type": "object",
         "properties": {
           "success": {
@@ -1137,146 +2454,18 @@
           "data": {
             "type": "object",
             "properties": {
-              "appointment": {
-                "$ref": "#/components/schemas/Appointment"
+              "workspaces": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WorkspaceMinimal"
+                }
+              },
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
               }
             }
           }
         }
-      },
-      "Appointment": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "customer_name": {
-            "type": "string"
-          },
-          "customer_phone": {
-            "type": "string"
-          },
-          "customer_email": {
-            "type": "string"
-          },
-          "appointment_date": {
-            "type": "string"
-          },
-          "start_time": {
-            "type": "string"
-          },
-          "end_time": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "customer_name",
-          "appointment_date",
-          "start_time"
-        ]
-      },
-      "AppointmentCreate": {
-        "type": "object",
-        "properties": {
-          "customer_name": {
-            "type": "string"
-          },
-          "appointment_date": {
-            "type": "string"
-          },
-          "start_time": {
-            "type": "string"
-          },
-          "service_id": {
-            "type": "string"
-          },
-          "customer_email": {
-            "type": "string"
-          },
-          "customer_phone": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "customer_name",
-          "appointment_date",
-          "start_time"
-        ]
-      },
-      "AppointmentUpdate": {
-        "type": "object",
-        "properties": {
-          "customer_name": {
-            "type": "string"
-          },
-          "appointment_date": {
-            "type": "string"
-          },
-          "start_time": {
-            "type": "string"
-          },
-          "end_time": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "notes": {
-            "type": "string"
-          }
-        }
-      },
-      "AppointmentStatusUpdate": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "enum": [
-              "scheduled",
-              "confirmed",
-              "cancelled",
-              "completed",
-              "no_show"
-            ]
-          }
-        },
-        "required": [
-          "status"
-        ]
-      },
-      "Pagination": {
-        "type": "object",
-        "properties": {
-          "page": {
-            "type": "integer"
-          },
-          "limit": {
-            "type": "integer"
-          },
-          "total": {
-            "type": "integer"
-          },
-          "total_pages": {
-            "type": "integer"
-          }
-        }
-      },
-      "DeleteMessage": { "type": "object", "properties": { "message": { "type": "string" } } },
-      "WorkspaceCreditsResponse": { "type": "object", "properties": { "credits": { "type": "integer" }, "status": { "type": "string", "enum": ["TRIAL", "ACTIVE", "PAST_DUE", "CANCELED"] } }, "required": ["credits", "status"] },
-      "ErrorResponse": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "error"
-        ]
       }
     }
   }

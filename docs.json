@@ -42,27 +42,212 @@
       },
       {
         "tab": "API reference",
+        "openapi": "api-reference/openapi.json",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Agents • CRUD",
             "pages": [
-              "api-reference/introduction"
+              "GET /agents",
+              "POST /agents",
+              "GET /agents/{id}",
+              "PUT /agents/{id}",
+              "DELETE /agents/{id}"
             ]
           },
           {
-            "group": "Workspace",
+            "group": "Agents • Status",
             "pages": [
-              "api-reference/workspace/list",
-              "api-reference/workspace/credits"
+              "PUT /agent/{id}/inactive",
+              "PUT /agent/{id}/active"
             ]
           },
           {
-            "group": "Agents",
+            "group": "Agents • Workspace",
             "pages": [
-              "api-reference/agents/list",
-              "api-reference/agents/create",
-              "api-reference/agents/delete",
-              "api-reference/agents/get-by-id"
+              "GET /workspace/{workspaceId}/agents",
+              "POST /workspace/{workspaceId}/agents"
+            ]
+          },
+          {
+            "group": "Agents • Settings",
+            "pages": [
+              "GET /agent/{id}/settings",
+              "PUT /agent/{id}/settings"
+            ]
+          },
+          {
+            "group": "Agents • Conversation",
+            "pages": [
+              "POST /agent/{id}/conversation",
+              "POST /agent/{id}/add-message"
+            ]
+          },
+          {
+            "group": "Training • Agent",
+            "pages": [
+              "GET /agent/{id}/trainings",
+              "POST /agent/{id}/trainings",
+              "PUT /training/{id}",
+              "DELETE /training/{id}"
+            ]
+          },
+          {
+            "group": "Training • Documents",
+            "pages": [
+              "GET /training/documents",
+              "POST /training/documents",
+              "DELETE /training/documents/{id}"
+            ]
+          },
+          {
+            "group": "Training • Q&A",
+            "pages": [
+              "GET /training/qa",
+              "POST /training/qa",
+              "PUT /training/qa/{id}",
+              "DELETE /training/qa/{id}"
+            ]
+          },
+          {
+            "group": "Training • Texts",
+            "pages": [
+              "GET /training/text",
+              "POST /training/text",
+              "PUT /training/text/{id}",
+              "DELETE /training/text/{id}"
+            ]
+          },
+          {
+            "group": "Training • Statistics",
+            "pages": [
+              "GET /training/stats"
+            ]
+          },
+          {
+            "group": "Conversations • CRUD",
+            "pages": [
+              "GET /conversations",
+              "POST /conversations",
+              "GET /conversations/{id}",
+              "PUT /conversations/{id}"
+            ]
+          },
+          {
+            "group": "Conversations • Messages",
+            "pages": [
+              "GET /conversations/{id}/messages"
+            ]
+          },
+          {
+            "group": "Conversations • AI Control",
+            "pages": [
+              "PUT /conversations/{id}/pause"
+            ]
+          },
+          {
+            "group": "Conversations • Statistics",
+            "pages": [
+              "GET /conversations/stats"
+            ]
+          },
+          {
+            "group": "Appointments • CRUD",
+            "pages": [
+              "GET /appointments",
+              "POST /appointments",
+              "GET /appointments/{id}",
+              "PUT /appointments/{id}",
+              "DELETE /appointments/{id}"
+            ]
+          },
+          {
+            "group": "Appointments • Status",
+            "pages": [
+              "PUT /appointments/{id}/status"
+            ]
+          },
+          {
+            "group": "Appointments • Calendar",
+            "pages": [
+              "GET /appointments/calendar"
+            ]
+          },
+          {
+            "group": "Appointments • Statistics",
+            "pages": [
+              "GET /appointments/stats"
+            ]
+          },
+          {
+            "group": "Follow-ups • Lists",
+            "pages": [
+              "GET /followups",
+              "GET /followups/scheduled"
+            ]
+          },
+          {
+            "group": "Follow-ups • Automation",
+            "pages": [
+              "POST /followups/automation",
+              "GET /followups/automation/{id}",
+              "PUT /followups/automation/{id}",
+              "DELETE /followups/automation/{id}"
+            ]
+          },
+          {
+            "group": "Follow-ups • Operations",
+            "pages": [
+              "POST /followups/trigger"
+            ]
+          },
+          {
+            "group": "Follow-ups • Statistics",
+            "pages": [
+              "GET /followups/stats"
+            ]
+          },
+          {
+            "group": "Workspaces • CRUD",
+            "pages": [
+              "GET /workspaces",
+              "POST /workspaces",
+              "GET /workspaces/{id}",
+              "PUT /workspaces/{id}",
+              "DELETE /workspaces/{id}"
+            ]
+          },
+          {
+            "group": "Workspaces • Members",
+            "pages": [
+              "GET /workspaces/{id}/members",
+              "POST /workspaces/{id}/members",
+              "PUT /workspaces/{id}/members/{memberId}",
+              "DELETE /workspaces/{id}/members/{memberId}"
+            ]
+          },
+          {
+            "group": "Workspaces • Permissions",
+            "pages": [
+              "GET /workspaces/permissions",
+              "POST /workspaces/permissions",
+              "PUT /workspaces/permissions/{id}",
+              "DELETE /workspaces/permissions/{id}"
+            ]
+          },
+          {
+            "group": "Workspaces • Roles",
+            "pages": [
+              "GET /workspaces/roles",
+              "POST /workspaces/roles",
+              "PUT /workspaces/roles/{id}",
+              "DELETE /workspaces/roles/{id}"
+            ]
+          },
+          {
+            "group": "Credits",
+            "pages": [
+              "GET /company/credits",
+              "GET /agent/{id}/credits-spent"
             ]
           }
         ]
@@ -123,6 +308,7 @@
     }
   },
   "api": {
+    "openapi": "api-reference/openapi.json",
     "mdx": {
       "server": "https://juiywycqytekaffjcbfa.supabase.co/functions/v1",
       "auth": {
