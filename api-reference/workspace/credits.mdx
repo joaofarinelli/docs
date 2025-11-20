@@ -1,35 +1,6 @@
 ---
-title: "Saldo de créditos"
-openapi: "GET /v1/workspace/{workspaceId}/credits"
-api: 'GET https://api.mintlify.com/v1/workspace/{workspaceId}/credits'
+title: "Credits Balance"
+openapi: "GET /api-v1/workspace/{workspaceId}/credits"
+api: 'GET /api-v1/workspace/{workspaceId}/credits'
 description: "Lista a quantidade de crédito disponível na conta."
 ---
-
-<RequestExample>
-
-```bash filename
-curl --request GET \
-  --url https://timelyai.com.br/v1/workspace/{workspaceId}/credits \
-  --header 'x-api-key: <token>'
-```
-
-</RequestExample>
-
-<ResponseExample>
-
-``` 200
-{
-  "credits": 123,
-  "status": "TRIAL"
-}
-```
-
-
-``` 400
-```
-
-
-``` 403
-```
-
-</ResponseExample>

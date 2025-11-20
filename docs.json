@@ -55,6 +55,15 @@
               "api-reference/workspace/list",
               "api-reference/workspace/credits"
             ]
+          },
+          {
+            "group": "Agents",
+            "pages": [
+              "api-reference/agents/list",
+              "api-reference/agents/create",
+              "api-reference/agents/delete",
+              "api-reference/agents/get-by-id"
+            ]
           }
         ]
       }
@@ -114,12 +123,12 @@
     }
   },
   "api": {
-  "mdx": {
-    "server": "https://mintlify.com/api",
-    "auth": {
-      "method": "key",
-      "name": "x-api-key"
+    "mdx": {
+      "server": "https://juiywycqytekaffjcbfa.supabase.co/functions/v1",
+      "auth": {
+        "method": "key",
+        "name": "x-api-key"
+      }
     }
   }
-}
 }

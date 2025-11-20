@@ -9,8 +9,14 @@ description: "Documentação completa da API de integração com a Timely.ai."
 
 ## Autenticação
 
-Todas as APIs utilizam autenticação por meio de Bearer tokens, que devem ser informados no cabeçalho de cada requisição. Para obter seu token de autenticação, acesse a página [**Chave de API**](https://app.gptmaker.ai/browse/developers)
+Todas as APIs utilizam autenticação via chave de API no cabeçalho `x-api-key`. Inclua em todas as requisições:
 
-<Card title="Plant Store Endpoints" icon="leaf" href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json">
-  Clique para obter o token de acesso a API da Timely.ai
+```
+x-api-key: <token>
+```
+
+Para obter sua chave de API, acesse a página [**Chave de API**](https://app.timelyai.com.br/developers).
+
+<Card title="Referência OpenAPI" icon="code" href="/api-reference/openapi.json">
+  Abra a especificação OpenAPI usada nas páginas de API.
 </Card>
